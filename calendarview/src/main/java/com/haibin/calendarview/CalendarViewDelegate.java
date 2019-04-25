@@ -374,6 +374,11 @@ final class CalendarViewDelegate {
 
     private int mMinSelectRange, mMaxSelectRange;
 
+    /**
+     * 自定义日历范围,可以非连续
+     */
+    private List<Calendar> mCustomCalendarRange;
+
     CalendarViewDelegate(Context context, @Nullable AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CalendarView);
 
@@ -1042,5 +1047,13 @@ final class CalendarViewDelegate {
         }
         addSchemesFromMap(calendars);
         return calendars;
+    }
+
+    public List<Calendar> getCustomCalendarRange() {
+        return mCustomCalendarRange;
+    }
+
+    public void setCustomCalendarRange(List<Calendar> customCalendarRange) {
+        this.mCustomCalendarRange = customCalendarRange;
     }
 }

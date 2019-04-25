@@ -573,7 +573,7 @@ public final class MonthViewPager extends ViewPager {
     /**
      * 日历卡月份Adapter
      */
-    private final class MonthViewPagerAdapter extends PagerAdapter {
+    public class MonthViewPagerAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
@@ -620,6 +620,14 @@ public final class MonthViewPager extends ViewPager {
             }
             view.onDestroy();
             container.removeView(view);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            int year = (position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear();
+            int month = (position + mDelegate.getMinYearMonth() - 1) % 12 + 1;
+            int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+            return currentYear == year ? month + "月" : year + "年" + month + "月";
         }
     }
 
