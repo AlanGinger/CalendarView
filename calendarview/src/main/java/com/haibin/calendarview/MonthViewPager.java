@@ -264,9 +264,15 @@ public final class MonthViewPager extends ViewPager {
         }
         isUsingScrollToCalendar = false;
         Calendar calendar = mDelegate.mSelectedCalendar;
-        int position;
+        int position = 0;
         if (mDelegate.getCustomCalendarRange() != null) {
-            position = mDelegate.getCustomCalendarRange().indexOf(calendar);
+            for (int i = 0; i < mDelegate.getCustomCalendarRange().size(); i++) {
+                Calendar c = mDelegate.getCustomCalendarRange().get(i);
+                if (c.getYear() == calendar.getYear() && c.getMonth() == calendar.getMonth()) {
+                    position = i;
+                    break;
+                }
+            }
         } else {
             int y = calendar.getYear() - mDelegate.getMinYear();
             position = 12 * y + calendar.getMonth() - mDelegate.getMinYearMonth();
@@ -314,9 +320,15 @@ public final class MonthViewPager extends ViewPager {
         mDelegate.mIndexCalendar = calendar;
         mDelegate.mSelectedCalendar = calendar;
         mDelegate.updateSelectCalendarScheme();
-        int position;
+        int position = 0;
         if (mDelegate.getCustomCalendarRange() != null) {
-            position = mDelegate.getCustomCalendarRange().indexOf(calendar);
+            for (int i = 0; i < mDelegate.getCustomCalendarRange().size(); i++) {
+                Calendar c = mDelegate.getCustomCalendarRange().get(i);
+                if (c.getYear() == calendar.getYear() && c.getMonth() == calendar.getMonth()) {
+                    position = i;
+                    break;
+                }
+            }
         } else {
             int y = calendar.getYear() - mDelegate.getMinYear();
             position = 12 * y + calendar.getMonth() - mDelegate.getMinYearMonth();
