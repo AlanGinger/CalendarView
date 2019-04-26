@@ -264,6 +264,13 @@ public class CalendarView extends FrameLayout {
         mYearViewPager.updateRange();
     }
 
+    public void setRange(List<Calendar> customCalendars) {
+        if (customCalendars != null && customCalendars.size() > 0) {
+            mDelegate.setCustomCalendarRange(customCalendars);
+            mMonthPager.notifyDataSetChanged();
+        }
+    }
+
     /**
      * 获取当天
      *

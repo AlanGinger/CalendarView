@@ -1054,6 +1054,14 @@ final class CalendarViewDelegate {
     }
 
     public void setCustomCalendarRange(List<Calendar> customCalendarRange) {
+        Calendar start = customCalendarRange.get(0);
+        Calendar end = customCalendarRange.get(customCalendarRange.size() - 1);
         this.mCustomCalendarRange = customCalendarRange;
+        this.mMinYear = start.getYear();
+        this.mMinYearMonth = start.getMonth();
+        this.mMaxYear = end.getYear();
+        this.mMaxYearMonth = end.getMonth();
+        this.mMaxYearDay = CalendarUtil.getMonthDaysCount(this.mMaxYear, mMaxYearMonth);
+        mCurrentMonthViewItem = customCalendarRange.size();
     }
 }

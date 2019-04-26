@@ -19,7 +19,9 @@ import com.haibin.calendarviewproject.base.activity.BaseActivity;
 import com.haibin.calendarviewproject.group.GroupItemDecoration;
 import com.haibin.calendarviewproject.group.GroupRecyclerView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MeiZuActivity extends BaseActivity implements
@@ -92,9 +94,15 @@ public class MeiZuActivity extends BaseActivity implements
         mCalendarView.setOnMonthChangeListener(new CalendarView.OnMonthChangeListener() {
             @Override
             public void onMonthChange(int year, int month) {
-                Toast.makeText(MeiZuActivity.this,mCalendarView.getMonthViewPager().getAdapter().getPageTitle(mCalendarView.getMonthViewPager().getCurrentItem()),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MeiZuActivity.this, mCalendarView.getMonthViewPager().getAdapter().getPageTitle(mCalendarView.getMonthViewPager().getCurrentItem()), Toast.LENGTH_SHORT).show();
             }
         });
+        List<Calendar> calendars = new ArrayList<>();
+        calendars.add(getSchemeCalendar(2019, 5, 1, 0, ""));
+        calendars.add(getSchemeCalendar(2019, 7, 1, 0, ""));
+        calendars.add(getSchemeCalendar(2019, 10, 1, 0, ""));
+        calendars.add(getSchemeCalendar(2021, 3, 1, 0, ""));
+        mCalendarView.setRange(calendars);
     }
 
     @Override

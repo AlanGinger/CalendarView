@@ -81,9 +81,11 @@ public final class MonthViewPager extends ViewPager {
      * 初始化
      */
     private void init() {
-        mMonthCount = 12 * (mDelegate.getMaxYear() - mDelegate.getMinYear())
-                - mDelegate.getMinYearMonth() + 1 +
-                mDelegate.getMaxYearMonth();
+//        mMonthCount = mDelegate.getCustomCalendarRange() != null ?
+//                mDelegate.getCustomCalendarRange().size() :
+//                12 * (mDelegate.getMaxYear() - mDelegate.getMinYear())
+//                        - mDelegate.getMinYearMonth() + 1 +
+//                        mDelegate.getMaxYearMonth();
         setAdapter(new MonthViewPagerAdapter());
         addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -158,7 +160,7 @@ public final class MonthViewPager extends ViewPager {
                     }
                 }
 
-                BaseMonthView view = (BaseMonthView) findViewWithTag(position);
+                BaseMonthView view = findViewWithTag(position);
                 if (view != null) {
                     int index = view.getSelectedIndex(mDelegate.mIndexCalendar);
                     if (mDelegate.getSelectMode() == CalendarViewDelegate.SELECT_MODE_DEFAULT) {
@@ -235,9 +237,9 @@ public final class MonthViewPager extends ViewPager {
      * 刷新
      */
     void notifyDataSetChanged() {
-        mMonthCount = 12 * (mDelegate.getMaxYear() - mDelegate.getMinYear())
-                - mDelegate.getMinYearMonth() + 1 +
-                mDelegate.getMaxYearMonth();
+//        mMonthCount = 12 * (mDelegate.getMaxYear() - mDelegate.getMinYear())
+//                - mDelegate.getMinYearMonth() + 1 +
+//                mDelegate.getMaxYearMonth();
         getAdapter().notifyDataSetChanged();
     }
 
@@ -262,10 +264,15 @@ public final class MonthViewPager extends ViewPager {
         }
         isUsingScrollToCalendar = false;
         Calendar calendar = mDelegate.mSelectedCalendar;
-        int y = calendar.getYear() - mDelegate.getMinYear();
-        int position = 12 * y + calendar.getMonth() - mDelegate.getMinYearMonth();
+        int position;
+        if (mDelegate.getCustomCalendarRange() != null) {
+            position = mDelegate.getCustomCalendarRange().indexOf(calendar);
+        } else {
+            int y = calendar.getYear() - mDelegate.getMinYear();
+            position = 12 * y + calendar.getMonth() - mDelegate.getMinYearMonth();
+        }
         setCurrentItem(position, false);
-        BaseMonthView view = (BaseMonthView) findViewWithTag(position);
+        BaseMonthView view = findViewWithTag(position);
         if (view != null) {
             view.setSelectedCalendar(mDelegate.mIndexCalendar);
             view.invalidate();
@@ -307,15 +314,20 @@ public final class MonthViewPager extends ViewPager {
         mDelegate.mIndexCalendar = calendar;
         mDelegate.mSelectedCalendar = calendar;
         mDelegate.updateSelectCalendarScheme();
-        int y = calendar.getYear() - mDelegate.getMinYear();
-        int position = 12 * y + calendar.getMonth() - mDelegate.getMinYearMonth();
+        int position;
+        if (mDelegate.getCustomCalendarRange() != null) {
+            position = mDelegate.getCustomCalendarRange().indexOf(calendar);
+        } else {
+            int y = calendar.getYear() - mDelegate.getMinYear();
+            position = 12 * y + calendar.getMonth() - mDelegate.getMinYearMonth();
+        }
         int curItem = getCurrentItem();
         if (curItem == position) {
             isUsingScrollToCalendar = false;
         }
         setCurrentItem(position, smoothScroll);
 
-        BaseMonthView view = (BaseMonthView) findViewWithTag(position);
+        BaseMonthView view = findViewWithTag(position);
         if (view != null) {
             view.setSelectedCalendar(mDelegate.mIndexCalendar);
             view.invalidate();
@@ -342,6 +354,7 @@ public final class MonthViewPager extends ViewPager {
      * 滚动到当前日期
      */
     void scrollToCurrent(boolean smoothScroll) {
+        if (mDelegate.getCustomCalendarRange() != null) return;//TODO 暂时不支持
         isUsingScrollToCalendar = true;
         int position = 12 * (mDelegate.getCurrentDay().getYear() - mDelegate.getMinYear()) +
                 mDelegate.getCurrentDay().getMonth() - mDelegate.getMinYearMonth();
@@ -352,7 +365,7 @@ public final class MonthViewPager extends ViewPager {
 
         setCurrentItem(position, smoothScroll);
 
-        BaseMonthView view = (BaseMonthView) findViewWithTag(position);
+        BaseMonthView view = findViewWithTag(position);
         if (view != null) {
             view.setSelectedCalendar(mDelegate.getCurrentDay());
             view.invalidate();
@@ -372,7 +385,7 @@ public final class MonthViewPager extends ViewPager {
      * @return 获取当前月份数据
      */
     List<Calendar> getCurrentMonthCalendars() {
-        BaseMonthView view = (BaseMonthView) findViewWithTag(getCurrentItem());
+        BaseMonthView view = findViewWithTag(getCurrentItem());
         if (view == null) {
             return null;
         }
@@ -383,7 +396,7 @@ public final class MonthViewPager extends ViewPager {
      * 更新为默认选择模式
      */
     void updateDefaultSelect() {
-        BaseMonthView view = (BaseMonthView) findViewWithTag(getCurrentItem());
+        BaseMonthView view = findViewWithTag(getCurrentItem());
         if (view != null) {
             int index = view.getSelectedIndex(mDelegate.mSelectedCalendar);
             view.mCurrentItem = index;
@@ -577,7 +590,11 @@ public final class MonthViewPager extends ViewPager {
 
         @Override
         public int getCount() {
-            return mMonthCount;
+            return mDelegate.getCustomCalendarRange() != null ?
+                    mDelegate.getCustomCalendarRange().size() :
+                    12 * (mDelegate.getMaxYear() - mDelegate.getMinYear())
+                            - mDelegate.getMinYearMonth() + 1 +
+                            mDelegate.getMaxYearMonth();
         }
 
         @Override
@@ -592,8 +609,16 @@ public final class MonthViewPager extends ViewPager {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            int year = (position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear();
-            int month = (position + mDelegate.getMinYearMonth() - 1) % 12 + 1;
+            int year;
+            int month;
+            if (mDelegate.getCustomCalendarRange() != null) {
+                Calendar calendar = mDelegate.getCustomCalendarRange().get(position);
+                year = calendar.getYear();
+                month = calendar.getMonth();
+            } else {
+                year = (position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear();
+                month = (position + mDelegate.getMinYearMonth() - 1) % 12 + 1;
+            }
             BaseMonthView view;
             try {
                 Constructor constructor = mDelegate.getMonthViewClass().getConstructor(Context.class);
@@ -624,12 +649,19 @@ public final class MonthViewPager extends ViewPager {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            int year = (position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear();
-            int month = (position + mDelegate.getMinYearMonth() - 1) % 12 + 1;
+            int year;
+            int month;
+            if (mDelegate.getCustomCalendarRange() != null) {
+                Calendar calendar = mDelegate.getCustomCalendarRange().get(position);
+                year = calendar.getYear();
+                month = calendar.getMonth();
+            } else {
+                year = (position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear();
+                month = (position + mDelegate.getMinYearMonth() - 1) % 12 + 1;
+            }
             int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
             return currentYear == year ? month + "月" : year + "年" + month + "月";
         }
     }
-
 
 }
