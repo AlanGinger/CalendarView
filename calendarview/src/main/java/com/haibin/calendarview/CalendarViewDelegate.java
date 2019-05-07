@@ -1062,6 +1062,6 @@ final class CalendarViewDelegate {
         this.mMaxYear = end.getYear();
         this.mMaxYearMonth = end.getMonth();
         this.mMaxYearDay = CalendarUtil.getMonthDaysCount(this.mMaxYear, mMaxYearMonth);
-        mCurrentMonthViewItem = customCalendarRange.size();
+        mCurrentMonthViewItem = 0;
     }
 }
