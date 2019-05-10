@@ -90,7 +90,7 @@ public final class MonthViewPager extends ViewPager {
         addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH) {
+                if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH || mDelegate.getCustomCalendarRange() != null) {
                     return;
                 }
                 int height;
@@ -190,7 +190,7 @@ public final class MonthViewPager extends ViewPager {
      * @param month month
      */
     private void updateMonthViewHeight(int year, int month) {
-        if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH) {//非动态高度就不需要了
+        if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH || mDelegate.getCustomCalendarRange() != null) {//非动态高度就不需要了
             mCurrentViewHeight = 6 * mDelegate.getCalendarItemHeight();
             ViewGroup.LayoutParams params = getLayoutParams();
             params.height = mCurrentViewHeight;

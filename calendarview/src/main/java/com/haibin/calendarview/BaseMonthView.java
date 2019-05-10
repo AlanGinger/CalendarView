@@ -96,7 +96,7 @@ public abstract class BaseMonthView extends BaseView {
             mCurrentItem = -1;
         }
 
-        if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH) {
+        if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH || mDelegate.getCustomCalendarRange() != null) {
             mLineCount = 6;
         } else {
             mLineCount = (preDiff + monthDayCount + mNextDiff) / 7;
@@ -140,7 +140,7 @@ public abstract class BaseMonthView extends BaseView {
      */
     final void updateShowMode() {
         mLineCount = CalendarUtil.getMonthViewLineCount(mYear, mMonth,
-                mDelegate.getWeekStart(),mDelegate.getMonthViewShowMode());
+                mDelegate.getWeekStart(), mDelegate.getMonthViewShowMode());
         mHeight = CalendarUtil.getMonthViewHeight(mYear, mMonth, mItemHeight, mDelegate.getWeekStart(),
                 mDelegate.getMonthViewShowMode());
         invalidate();
